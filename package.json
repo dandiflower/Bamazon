@@ -1,0 +1,23 @@
+{
+  "name": "Bamazon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dandiflower/Bamazon.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dandiflower/Bamazon/issues"
+  },
+  "homepage": "https://github.com/dandiflower/Bamazon#readme",
+  "dependencies": {
+    "mysql": "^2.15.0"
+  }
+}
