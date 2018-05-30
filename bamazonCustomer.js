@@ -28,30 +28,56 @@ function showProduct() {
         }
         queryId();
     });   
-}
+
 
 // The app should then prompt users with two messages.
 // The first should ask them the ID of the product they would like to buy.
 
-function queryId() {
-    inquirer.prompt([
-        {
-        name: "idQuery",
-        type: "input",
-        message: "What is the number of the product you would like to buy?"
-        }
-    ]).then(function(answer) {
-        var chosenItem = answer.idQuery;
-        console.log(chosenItem);
-        // connection.query("SELECT * FROM products WHERE item_id = answer.idQuery", function(err) {
-        //     if (err) throw err;
-        //     console.log
+    function queryId() {
+        inquirer.prompt([
+            {
+            name: "idQuery",
+            type: "input",
+            message: "What is the ID number of the product you would like to buy?"
+            }
+        ]).then(function(answer, res) {
             
-
+            connection.query("SELECT * FROM products", function(err, results) {
+                
+                if (err) throw err;
+                var choiceId = parseInt(answer.idQuery);  
+                console.log("You selected " + choiceId);
+                console.log(results[choiceId - 1].product_name);
+                // for (var i = 0; i < results.length; i++) {
+                //     if (choiceId === results[i].item_id) {
+                //         console.log("hello");
+                //     }
+            });        
         });
+
+    
+// function identifyItem(answer) {
+//     connection.query("SELECT * FROM products WHERE answer.item_id = 'chosenItem'");
+//     console.log(chosenItem);
+// }
+
+            function selectedItem() {
+                inquirer.prompt([
+                    {
+                        name: "quantity",
+                        type: "input",
+                        message: "How many would you like to purchase?"
+                    }
+                ]).then(function(response) {
+                    var chosenQuantity = response.quantity;
+                    return chosenQuantity;
+                });
+            }
+
+            selectedItem();
+        
     }
-
-
+}
 // The second message should ask how many units of the product they would like to buy.
 
 
