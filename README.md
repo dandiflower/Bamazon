@@ -17,9 +17,9 @@ Then either clone or download this repo.
 Inside your terminal or command prompt, navigate to the location of the cloned repo. Install the necessary dependencies by running - 
 ```
 npm install
+```
 
 ## Using the App :computer:
-
 
 Type `node bamazonCustomer.js` into your terminal to begin using the app. You will be give a list of items which you can pretend to purchase. The inventory will be updated upon your input. 
 

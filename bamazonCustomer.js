@@ -30,6 +30,7 @@ function showProduct() {
 
     });   
 
+}
 
 // The app should then prompt users with two messages.
 // The first should ask them the ID of the product they would like to buy.
@@ -62,6 +63,12 @@ function showProduct() {
                         name: "quantity",
                         type: "input",
                         message: "How many would you like to purchase?"
+                        // validate: function(value) {
+                        //     if (isNaN(value) === false) {
+                        //         return true;
+                        //     }
+                        //     return false;
+                        // }
                     }
                 ]).then(function(response) {
                      
@@ -83,6 +90,7 @@ function showProduct() {
                                 updateInventory();
                             } else {
                                 console.log("Sorry, we have an insufficient quantity!");
+                                startover();
                             }
 
                         });
@@ -90,14 +98,30 @@ function showProduct() {
                 function updateInventory() {
                     
                     connection.query(
-                        "UPDATE products", [{
-                            inventory: (inventory - chosenQuantity)
-                        }],
+                        "UPDATE products SET ?", {
+                            stock_quantity: (inventory - chosenQuantity)
+                        },
                         function (error) {
                             if (error) throw err;
-                            console.log(inventory);
+                            console.log("success!");
+                            startover();  
                         }
                     );
+
+                }
+
+                function startover() {
+                    inquirer.prompt({
+                        name: "startover",
+                        type: "list",
+                        message: "Please select what you would like to do next",
+                        choices: ["See Items", "Quit"]
+                    }).then(function(ans) {
+                        if (ans.startover.toUpperCase() === "See Items") {
+                            showProduct();
+                        } 
+                    });
+                    
                 }
                 });
             }
@@ -106,7 +130,7 @@ function showProduct() {
         });
         
     }
-}
+
 
 // Once the customer has placed the order, your application should check
 // if your store has enough of the product to meet the customer 's request.
