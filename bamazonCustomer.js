@@ -27,6 +27,7 @@ function showProduct() {
         console.log("--------------------------------------------");
         }
         queryId();
+
     });   
 
 
@@ -45,21 +46,15 @@ function showProduct() {
             connection.query("SELECT * FROM products", function(err, results) {
                 
                 if (err) throw err;
-                var choiceId = parseInt(answer.idQuery);  
-                console.log("You selected " + choiceId);
-                console.log(results[choiceId - 1].product_name);
-                // for (var i = 0; i < results.length; i++) {
-                //     if (choiceId === results[i].item_id) {
-                //         console.log("hello");
-                //     }
-            });        
-        });
+                var choiceId = parseInt(answer.idQuery);
+                var productChosen = results[choiceId - 1].product_name;
+                var inventory = results[choiceId -1].stock_quantity;
 
-    
-// function identifyItem(answer) {
-//     connection.query("SELECT * FROM products WHERE answer.item_id = 'chosenItem'");
-//     console.log(chosenItem);
-// }
+                console.log("You selected # " + choiceId + ", " + productChosen);
+                
+                selectedItem();
+                   
+// The second message should ask how many units of the product they would like to buy.
 
             function selectedItem() {
                 inquirer.prompt([
@@ -69,18 +64,49 @@ function showProduct() {
                         message: "How many would you like to purchase?"
                     }
                 ]).then(function(response) {
-                    var chosenQuantity = response.quantity;
-                    return chosenQuantity;
+                     
+                    var chosenQuantity = parseInt(response.quantity);
+                    // return chosenQuantity;
+                    console.log("Let me check if we have " + chosenQuantity + "...");
+
+                    inventoryCheck();
+
+                    function inventoryCheck(params) {
+                    
+                        connection.query("SELECT * FROM products", function () {
+                            if (err) throw err;
+                            // console.log(chosenQuantity);
+                            // console.log(productChosen);
+                            
+                            if (chosenQuantity <= inventory) {
+                                console.log("We are fulfilling your order!");
+                                updateInventory();
+                            } else {
+                                console.log("Sorry, we have an insufficient quantity!");
+                            }
+
+                        });
+                    }
+                function updateInventory() {
+                    
+                    connection.query(
+                        "UPDATE products", [{
+                            inventory: (inventory - chosenQuantity)
+                        }],
+                        function (error) {
+                            if (error) throw err;
+                            console.log(inventory);
+                        }
+                    );
+                }
                 });
             }
+        });
 
-            selectedItem();
+        });
         
     }
 }
-// The second message should ask how many units of the product they would like to buy.
-
-
 
 // Once the customer has placed the order, your application should check
 // if your store has enough of the product to meet the customer 's request.
