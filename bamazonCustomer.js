@@ -14,6 +14,7 @@ var connection = mysql.createConnection({
 connection.connect(function(err) {
     if (err) throw err;
     showProduct();
+    // queryId();
 });
 // Display all of the items available for sale. Include the ids, names, and prices of products
 
@@ -25,6 +26,7 @@ function showProduct() {
             }
         console.log("--------------------------------------------");
         }
+        queryId();
     });   
 }
 
@@ -36,22 +38,20 @@ function queryId() {
         {
         name: "idQuery",
         type: "input",
-        message: "What is the product ID of the product you would like to buy?"
+        message: "What is the number of the product you would like to buy?"
         }
-    ]).then(function(result, answer) {
-        connection.query("SELECT * FROM products", function(err) {
-            if (err) throw err;
-     
-        for (var i = 0; i > result.length; i++) {
-            if (result[i].item_id === answer.idQuery) {
-                console.log(result[i].item_id);
-            }
-        }
-    });
-});
-}
+    ]).then(function(answer) {
+        var chosenItem = answer.idQuery;
+        console.log(chosenItem);
+        // connection.query("SELECT * FROM products WHERE item_id = answer.idQuery", function(err) {
+        //     if (err) throw err;
+        //     console.log
+            
 
-queryId();
+        });
+    }
+
+
 // The second message should ask how many units of the product they would like to buy.
 
 
