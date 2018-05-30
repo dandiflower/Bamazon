@@ -25,8 +25,7 @@ function showProduct() {
             }
         console.log("--------------------------------------------");
         }
-    });
-    queryId();
+    });   
 }
 
 // The app should then prompt users with two messages.
@@ -37,15 +36,22 @@ function queryId() {
         {
         name: "idQuery",
         type: "input",
-        message: "What is the product ID of the item you would like to buy?"
+        message: "What is the product ID of the product you would like to buy?"
         }
-    ]).then(function(answer) {
-        var chosenID;
-        chosenID = parseInt(answer.idQuery);
-            
-        });
-    }
+    ]).then(function(result, answer) {
+        connection.query("SELECT * FROM products", function(err) {
+            if (err) throw err;
+     
+        for (var i = 0; i > result.length; i++) {
+            if (result[i].item_id === answer.idQuery) {
+                console.log(result[i].item_id);
+            }
+        }
+    });
+});
+}
 
+queryId();
 // The second message should ask how many units of the product they would like to buy.
 
 
