@@ -23,7 +23,7 @@ npm install
 
 Type `node bamazonCustomer.js` into your terminal to begin using the app. You will be give a list of items which you can pretend to purchase. The inventory will be updated upon your input. 
 
-To exit the app hold down `control + c`
+To exit the app at any time hold down `control + c`
 
 ## Built With :cd:
 * [Javascript](https://www.javascript.com/) - programming language

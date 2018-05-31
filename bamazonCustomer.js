@@ -2,6 +2,7 @@
 
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var {table} = require("table");
 
 var connection = mysql.createConnection({
     host: "localhost",
@@ -11,6 +12,8 @@ var connection = mysql.createConnection({
     database: "bamazon"
 });
 
+
+
 connection.connect(function(err) {
     if (err) throw err;
     showProduct();
@@ -19,21 +22,36 @@ connection.connect(function(err) {
 // Display all of the items available for sale. Include the ids, names, and prices of products
 
 function showProduct() {
+    var header = ["ID#", "Name", "Department", "Price", "# In Stock"];
+    var tableResult = [];
+    var tablePart;
+    var output;
+
+    tableResult.push(header);
+
     connection.query("SELECT * FROM products", function(err, res) {
         for (var i = 0; i < res.length; i++) {
-            if (parseInt(res[i].stock_quantity) > 0) {
-                console.log(res[i].item_id + " | " + res[i].product_name + " | " + res[i].price);
-            }
-        console.log("--------------------------------------------");
+
+            tablePart = [
+                res[i].item_id,
+                res[i].product_name,
+                res[i].department_name,
+                res[i].price,
+                res[i].stock_quantity
+                
+            ];
+
+                tableResult.push(tablePart);
         }
-        queryId();
 
-    });   
+            output = table(tableResult);
 
+            console.log(output);
+            queryId();
+
+    });
 }
 
-// The app should then prompt users with two messages.
-// The first should ask them the ID of the product they would like to buy.
 
     function queryId() {
         inquirer.prompt([
@@ -42,7 +60,7 @@ function showProduct() {
             type: "input",
             message: "What is the ID number of the product you would like to buy?"
             }
-        ]).then(function(answer, res) {
+        ]).then(function(answer) {
             
             connection.query("SELECT * FROM products", function(err, results) {
                 
@@ -54,21 +72,14 @@ function showProduct() {
                 console.log("You selected # " + choiceId + ", " + productChosen);
                 
                 selectedItem();
-                   
-// The second message should ask how many units of the product they would like to buy.
-
+            
             function selectedItem() {
                 inquirer.prompt([
                     {
                         name: "quantity",
                         type: "input",
                         message: "How many would you like to purchase?"
-                        // validate: function(value) {
-                        //     if (isNaN(value) === false) {
-                        //         return true;
-                        //     }
-                        //     return false;
-                        // }
+
                     }
                 ]).then(function(response) {
                      
@@ -98,9 +109,9 @@ function showProduct() {
                 function updateInventory() {
                     
                     connection.query(
-                        "UPDATE products SET ?", {
+                        "UPDATE products SET ? WHERE ?", [{
                             stock_quantity: (inventory - chosenQuantity)
-                        },
+                        }, { item_id: choiceId}],
                         function (error) {
                             if (error) throw err;
                             console.log("success!");
@@ -117,19 +128,23 @@ function showProduct() {
                         message: "Please select what you would like to do next",
                         choices: ["See Items", "Quit"]
                     }).then(function(ans) {
-                        if (ans.startover.toUpperCase() === "See Items") {
+                        if (ans.startover === "See Items") {
                             showProduct();
-                        } 
-                    });
+                        } else {
+                            console.log("goodbye");
+                            connection.end();
+
+                    }
                     
-                }
                 });
-            }
-        });
+                }
+            });
+        }
 
         });
+    });
         
-    }
+}
 
 
 // Once the customer has placed the order, your application should check
